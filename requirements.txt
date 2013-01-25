@@ -1,1 +1,1 @@
--e git+git@github.com:clee/requests@b830c1e1d9479418c804e322fe9859c887e4b713#egg=requests-dev
+-e git+git://github.com/clee/requests@b830c1e1d9479418c804e322fe9859c887e4b713#egg=requests-dev
