@@ -30,6 +30,29 @@ class Hammer(object):
 		self.rpm = 0
 		self.session = requests.Session()
 
+	def log_status(self, status, path, new_location):
+		if LOG.getEffectiveLevel() > logging.INFO:
+			return
+
+		def good():
+			LOG.info(u"\x1B[034;1m(✓) {0}\x1B[0m response from {1}".format(status, path))
+
+		def redir():
+			LOG.info(u"\x1B[037;1m(→) {0}\x1B[0m redirect from {1} to {2}".format(status, path, new_location))
+
+		def bad():
+			LOG.info(u"\x1B[031;1m(✘) {0}\x1B[0m response from {1}".format(status, path))
+
+		codes = {}
+		for code in (200, 201, 202, 203, 204, 205, 206, 207):
+			codes[code] = good
+		for code in (301, 302, 303, 307):
+			codes[code] = redir
+		try:
+			codes[status]()
+		except:
+			bad(status, path)
+
 	def setRPM(self, rpm):
 		self.rpm = rpm
 
@@ -52,28 +75,16 @@ class Hammer(object):
 
 		full_url = '{0}://{1}:{2}{3}'.format(scheme, hostname, port, path)
 		self.session.headers.update(headers)
+
 		if method == 'GET':
 			response = self.session.request(method, full_url, params=body, allow_redirects=False)
 		else:
 			response = self.session.request(method, full_url, data=body, allow_redirects=False)
 
 		self.lastpath = path
+
 		self.status_code = response.status_code
-		def good():
-			LOG.info(u"\x1B[034;1m(✓) {0}\x1B[0m response from {1}".format(self.status_code, path))
-		def redir():
-			LOG.info(u"\x1B[037;1m(→) {0}\x1B[0m redirect from {1} to {2}".format(self.status_code, path, response.headers['location']))
-		def bad():
-			LOG.info(u"\x1B[031;1m(✘) {0}\x1B[0m response from {1}".format(self.status_code, path))
-		codes = {}
-		for code in xrange(200, 207):
-			codes[code] = good
-		for code in (301, 302, 303, 307):
-			codes[code] = redir
-		try:
-			codes[self.status_code]()
-		except:
-			bad()
+		self.log_status(self.status_code, path, response.headers.get('location') or None)
 
 		elapsed = int(response.elapsed.total_seconds() * 1000)
 		responses = {path: { method: { self.status_code: [elapsed]}}}
