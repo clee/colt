@@ -105,27 +105,3 @@ class Hammer(object):
 	def delete(self, url, params={}):
 		self.request('DELETE', url, params)
 
-	def get_shared_email(self):
-		self.get('/shared/email/')
-
-	def post_shared_email(self, params):
-		self.post('/shared/email/', params)
-
-	def get_shared_domain(self):
-		self.get('/shared/domain/')
-
-	def post_shared_domain(self, params):
-		self.post('/shared/domain/', params)
-
-	def get_shared_plan(self):
-		self.get('/shared/plan/')
-
-	def post_shared_plan(self, params):
-		self.post('/shared/plan/', params)
-
-	def get_shared_billing(self):
-		self.get('/shared/billing/')
-
-	def post_shared_billing(self, params):
-		self.post('/shared/billing/', params)
-
