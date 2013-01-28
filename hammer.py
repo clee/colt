@@ -74,9 +74,11 @@ class Hammer(object):
 			codes[self.status_code]()
 		except:
 			bad()
-		time_taken = int(response.time_taken * 1000)
-		responses = {path: { method: { self.status_code: [time_taken]}}}
+
+		elapsed = int(response.elapsed.total_seconds() * 1000)
+		responses = {path: { method: { self.status_code: [elapsed]}}}
 		self.responses = dictmerge(self.responses, responses)
+
 		if self.status_code in (301, 302, 303, 307) and 'location' in response.headers:
 			self.get(response.headers['location'], {})
 
