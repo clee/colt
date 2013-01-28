@@ -1,8 +1,11 @@
 #!/usr/bin/env python
 # vim: set fileencoding=utf-8
 
-import urllib
-from urlparse import urlparse
+try:
+	from urllib.parse import urlparse
+except ImportError:
+	from urlparse import urlparse
+
 import requests
 import logging
 
@@ -35,13 +38,13 @@ class Hammer(object):
 			return
 
 		def good():
-			LOG.info(u"\x1B[034;1m(✓) {0}\x1B[0m response from {1}".format(status, path))
+			LOG.info("\x1B[034;1m(✓) {0}\x1B[0m response from {1}".format(status, path))
 
 		def redir():
-			LOG.info(u"\x1B[037;1m(→) {0}\x1B[0m redirect from {1} to {2}".format(status, path, new_location))
+			LOG.info("\x1B[037;1m(→) {0}\x1B[0m redirect from {1} to {2}".format(status, path, new_location))
 
 		def bad():
-			LOG.info(u"\x1B[031;1m(✘) {0}\x1B[0m response from {1}".format(status, path))
+			LOG.info("\x1B[031;1m(✘) {0}\x1B[0m response from {1}".format(status, path))
 
 		codes = {}
 		for code in (200, 201, 202, 203, 204, 205, 206, 207):
