@@ -18,12 +18,16 @@ class Hammer(object):
 	def __init__(self, host):
 		self.hostname = host['name']
 		self.hostport = host['port']
+		self.use_ssl = False
 		self.cookies = []
 		self.lastpath = None
 		self.responses = {}
 		self.response_code = -1
 		self.rpm = 0
 		self.session = requests.Session()
+
+	def use_ssl(self, should_use_ssl):
+		self.use_ssl = should_use_ssl
 
 	def log_status(self, status, path, new_location):
 		if LOG.getEffectiveLevel() > logging.INFO:
@@ -54,7 +58,11 @@ class Hammer(object):
 	def request(self, method, url, body):
 		response_body = ''
 		u = urlparse(url)
-		scheme = u.scheme or 'http'
+		if self.use_ssl:
+			default_scheme = 'https'
+		else:
+			default_scheme = 'http'
+		scheme = u.scheme or default_scheme
 		hostname = u.hostname or self.hostname
 		port = u.port or self.hostport
 		path = u.path
@@ -66,7 +74,7 @@ class Hammer(object):
 		if method == 'POST':
 			headers['Content-Type'] = 'application/x-www-form-urlencoded'
 		if self.lastpath:
-			headers['Referer'] = "http://{0}:{1}{2}".format(self.hostname, self.hostport, self.lastpath)
+			headers['Referer'] = "{0}://{1}:{2}{3}".format(scheme, self.hostname, self.hostport, self.lastpath)
 
 		full_url = '{0}://{1}:{2}{3}'.format(scheme, hostname, port, path)
 		self.session.headers.update(headers)
