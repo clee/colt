@@ -26,7 +26,7 @@ class Hammer(object):
 		self.rpm = 0
 		self.session = requests.Session()
 
-	def use_ssl(self, should_use_ssl):
+	def setSSL(self, should_use_ssl):
 		self.use_ssl = should_use_ssl
 
 	def log_status(self, status, path, new_location):
