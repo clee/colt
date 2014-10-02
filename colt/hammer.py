@@ -8,6 +8,7 @@ except ImportError:
 
 import logging
 import requests
+import sys
 
 from .utils import dictmerge
 
