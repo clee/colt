@@ -33,14 +33,23 @@ class Hammer(object):
 		if LOG.getEffectiveLevel() > logging.INFO:
 			return
 
+		if hasattr(sys.stdout, 'isatty') and sys.stdout.isatty():
+			goodfmt = "\x1B[034;1m(✓) {0}\x1B[0m response from {1}"
+			redirfmt = "\x1B[037;1m(→) {0}\x1B[0m redirect from {1} to {2}"
+			badfmt = "\x1B[031;1m(✘) {0}\x1B[0m response from {1}"
+		else:
+			goodfmt = "(✓) {0} response from {1}"
+			redirfmt = "(→) {0} redirect from {1} to {2}"
+			badfmt = "(✘) {0} response from {1}"
+
 		def good():
-			LOG.info("\x1B[034;1m(✓) {0}\x1B[0m response from {1}".format(status, path))
+			LOG.info(goodfmt.format(status, path))
 
 		def redir():
-			LOG.info("\x1B[037;1m(→) {0}\x1B[0m redirect from {1} to {2}".format(status, path, new_location))
+			LOG.info(redirfmt.format(status, path, new_location))
 
 		def bad():
-			LOG.info("\x1B[031;1m(✘) {0}\x1B[0m response from {1}".format(status, path))
+			LOG.info(badfmt.format(status, path))
 
 		codes = {}
 		for code in (200, 201, 202, 203, 204, 205, 206, 207):
