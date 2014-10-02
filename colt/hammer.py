@@ -50,7 +50,7 @@ class Hammer(object):
 		try:
 			codes[status]()
 		except:
-			bad(status, path)
+			bad()
 
 	def setRPM(self, rpm):
 		self.rpm = rpm
