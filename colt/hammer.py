@@ -20,6 +20,7 @@ class Hammer(object):
 		self.hostname = host['name']
 		self.hostport = host['port']
 		self.use_ssl = False
+		self.verify_ssl = True
 		self.cookies = []
 		self.lastpath = None
 		self.responses = {}
@@ -29,6 +30,9 @@ class Hammer(object):
 
 	def setSSL(self, should_use_ssl):
 		self.use_ssl = should_use_ssl
+
+	def setVerifySSL(self, verify):
+		self.verify_ssl = verify
 
 	def log_status(self, status, path, new_location):
 		if LOG.getEffectiveLevel() > logging.INFO:
@@ -90,9 +94,9 @@ class Hammer(object):
 		self.session.headers.update(headers)
 
 		if method == 'GET':
-			response = self.session.request(method, full_url, params=body, allow_redirects=False)
+			response = self.session.request(method, full_url, params=body, allow_redirects=False, verify=self.verify_ssl)
 		else:
-			response = self.session.request(method, full_url, data=body, allow_redirects=False)
+			response = self.session.request(method, full_url, data=body, allow_redirects=False, verify=self.verify_ssl)
 
 		self.lastpath = path
 
