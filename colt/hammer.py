@@ -15,6 +15,9 @@ from .utils import dictmerge
 
 LOG = logging.getLogger(__name__)
 
+class BadResponse(Exception):
+	pass
+
 class Hammer(object):
 	def __init__(self, host):
 		self.hostname = host['name']
@@ -54,7 +57,8 @@ class Hammer(object):
 			LOG.info(redirfmt.format(status, path, new_location))
 
 		def bad():
-			LOG.info(badfmt.format(status, path))
+			LOG.error(badfmt.format(status, path))
+			raise BadResponse
 
 		codes = {}
 		for code in (200, 201, 202, 203, 204, 205, 206, 207):
