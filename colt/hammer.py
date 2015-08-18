@@ -27,8 +27,9 @@ class Hammer(object):
 		self.cookies = []
 		self.lastpath = None
 		self.responses = {}
-		self.response_code = -1
+		self.status_code = -1
 		self.rpm = 0
+		self.follow_redirects = True
 		self.session = requests.Session()
 
 	def setSSL(self, should_use_ssl):
@@ -36,6 +37,9 @@ class Hammer(object):
 
 	def setVerifySSL(self, verify):
 		self.verify_ssl = verify
+
+	def setFollowRedirects(self, should_follow):
+		self.follow_redirects = should_follow
 
 	def log_status(self, status, path, new_location):
 		if LOG.getEffectiveLevel() > logging.INFO:
@@ -111,18 +115,21 @@ class Hammer(object):
 		responses = {path: { method: { self.status_code: [elapsed]}}}
 		self.responses = dictmerge(self.responses, responses)
 
-		if self.status_code in (301, 302, 303, 307) and 'location' in response.headers:
-			self.get(response.headers['location'], {})
+		if self.follow_redirects and \
+		   self.status_code in (301, 302, 303, 307) and \
+		   'location' in response.headers:
+			return self.get(response.headers['location'], {})
+		return response
 
 	def get(self, url, params={}):
-		self.request('GET', url, params)
+		return self.request('GET', url, params)
 
 	def post(self, url, params={}):
-		self.request('POST', url, params)
+		return self.request('POST', url, params)
 
 	def put(self, url, params={}):
-		self.request('PUT', url, params)
+		return self.request('PUT', url, params)
 
 	def delete(self, url, params={}):
-		self.request('DELETE', url, params)
+		return self.request('DELETE', url, params)
 
